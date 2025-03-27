@@ -11,6 +11,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/buses", require("./routes/busRoutes"));
+
 
 if (require.main === module) {
   connectDB();
