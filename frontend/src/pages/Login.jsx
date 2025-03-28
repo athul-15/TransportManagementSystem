@@ -11,13 +11,35 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/api/auth/login', formData);
-      login(response.data);
-      navigate('/tasks');
+      const res = await axiosInstance.post("/auth/login", formData);
+      console.log("✅ Login Response:", res.data);
+
+      const { token, user } = res.data;
+  
+      if (!token || !user) {
+        alert("Login failed. Incomplete data.");
+        return;
+      }
+  
+      // Save token
+      localStorage.setItem("token", token);
+  
+      // 👇 Role check: Admin or User
+      if (user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/buses");
+      }
+      
+  
     } catch (error) {
-      alert('Login failed. Please try again.');
+      console.error("❌ Login error:", error.response?.data || error.message);
+      alert("Login failed. Please try again.");
     }
   };
+  
+  
+  
 
   return (
     <div className="max-w-md mx-auto mt-20">
