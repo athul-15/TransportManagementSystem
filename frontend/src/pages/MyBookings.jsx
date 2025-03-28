@@ -4,36 +4,43 @@ import axios from "../axiosConfig";
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
 
-  const fetchBookings = async () => {
-    const res = await axios.get("/bookings/user");
-    setBookings(res.data);
-  };
-
-  const cancelBooking = async (id) => {
-    try {
-      await axios.delete(`/bookings/${id}`);
-      fetchBookings();
-      alert("Booking cancelled!");
-    } catch (err) {
-      alert("Failed to cancel");
-    }
-  };
-
   useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const res = await axios.get("/bookings/user");
+        setBookings(res.data);
+      } catch (err) {
+        alert("Failed to load bookings");
+      }
+    };
     fetchBookings();
   }, []);
 
   return (
-    <div>
-      <h2>My Bookings</h2>
-      <ul>
-        {bookings.map((b) => (
-          <li key={b._id}>
-            {b.bus.busNumber} - Seat {b.seatNumber} | {new Date(b.bookingDate).toLocaleString()}
-            <button onClick={() => cancelBooking(b._id)}>Cancel</button>
-          </li>
-        ))}
-      </ul>
+    <div style={{ padding: "20px" }}>
+      <h2 style={{ marginBottom: "20px" }}>My Booking History</h2>
+      {bookings.length === 0 ? (
+        <p>No bookings found.</p>
+      ) : (
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {bookings.map((b) => (
+            <li
+              key={b._id}
+              style={{
+                marginBottom: "15px",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "6px",
+                background: "#fdfdfd",
+              }}
+            >
+              <strong>Bus:</strong> {b.bus.busNumber} ({b.bus.from} → {b.bus.to})<br />
+              <strong>Seat:</strong> {b.seatNumber}<br />
+              <strong>Date:</strong> {new Date(b.bookingDate).toLocaleDateString()}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

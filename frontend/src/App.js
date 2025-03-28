@@ -9,6 +9,10 @@ import Tasks from "./pages/Tasks";
 import AdminDashboard from "./pages/AdminDashboard";
 import BookBus from "./pages/BookBus";
 import MyBookings from "./pages/MyBookings";
+//import MyBookings from "./pages/MyBookings";
+
+// Inside <Routes>
+
 
 function App() {
   return (
@@ -26,6 +30,7 @@ function App() {
             </div>
           }
         />
+        <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/book" element={<BookBus />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/register" element={<Register />} />

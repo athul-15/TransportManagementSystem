@@ -2,9 +2,27 @@ const Bus = require("../models/Bus");
 
 // GET /api/buses
 const getAllBuses = async (req, res) => {
-  const buses = await Bus.find();
-  res.json(buses);
-};
+    const { from, to, date } = req.query;
+    let query = {};
+  
+    if (from) query.from = { $regex: from, $options: "i" };
+    if (to) query.to = { $regex: to, $options: "i" };
+    if (date) query.date = new Date(date);
+  
+    const buses = await Bus.find(query);
+    res.json(buses);
+  };
+  
+  const fetchBuses = async () => {
+    const params = new URLSearchParams();
+    if (filters.from) params.append("from", filters.from);
+    if (filters.to) params.append("to", filters.to);
+    if (filters.date) params.append("date", filters.date);
+  
+    const res = await axios.get(`/buses?${params.toString()}`);
+    setBuses(res.data);
+  };
+  
 
 // POST /api/buses
 const addBus = async (req, res) => {

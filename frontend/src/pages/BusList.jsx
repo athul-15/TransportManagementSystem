@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "../axiosConfig";
+//  import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 
 const BusList = () => {
+    const navigate = useNavigate();
   const [buses, setBuses] = useState([]);
-  const role = localStorage.getItem("role"); // "admin" or "user"
+  const [filters, setFilters] = useState({ from: "", to: "", date: "" });
+  const role = localStorage.getItem("role");
+
+const fetchBuses = async () => {
+ const params = new URLSearchParams();
+    if (filters.from) params.append("from", filters.from);
+    if (filters.to) params.append("to", filters.to);
+    if (filters.date) params.append("date", filters.date);
+
+    const res = await axios.get(`/buses?${params.toString()}`);
+    setBuses(res.data);
+  };
 
   useEffect(() => {
-    const fetchBuses = async () => {
-      const res = await axios.get("/buses");
-      setBuses(res.data);
-    };
     fetchBuses();
   }, []);
 
@@ -50,7 +61,55 @@ const BusList = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+        {role === "user" && (
+  <div style={{ marginBottom: "20px" }}>
+    <Link
+      to="/my-bookings"
+      style={{
+        backgroundColor: "#007bff",
+        color: "#fff",
+        padding: "8px 16px",
+        borderRadius: "6px",
+        textDecoration: "none",
+      }}
+    >
+      View My Booking History
+    </Link>
+  </div>
+)}
       <h2 style={{ color: "#333", marginBottom: "20px" }}>Available Buses</h2>
+      
+
+      {/* 🔍 Search Form */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          fetchBuses();
+        }}
+        style={{ marginBottom: "20px" }}
+      >
+        <input
+          placeholder="From"
+          value={filters.from}
+          onChange={(e) => setFilters({ ...filters, from: e.target.value })}
+          style={{ marginRight: "10px" }}
+        />
+        <input
+          placeholder="To"
+          value={filters.to}
+          onChange={(e) => setFilters({ ...filters, to: e.target.value })}
+          style={{ marginRight: "10px" }}
+        />
+        <input
+          type="date"
+          value={filters.date}
+          onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+          style={{ marginRight: "10px" }}
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      {/* 🚌 Bus Cards */}
       <div style={{ display: "grid", gap: "20px", maxWidth: "800px", margin: "0 auto" }}>
         {buses.map((bus) => (
           <div
@@ -64,6 +123,24 @@ const BusList = () => {
             <p><strong>Time:</strong> {bus.departureTime}</p>
             <p><strong>Date:</strong> {new Date(bus.date).toLocaleDateString()}</p>
             <p><strong>Seats Available:</strong> {bus.seatsAvailable}</p>
+
+            {role === "user" && (
+  <button
+    onClick={() => navigate(`/book?busId=${bus._id}`)}
+    style={{
+      marginTop: "10px",
+      padding: "6px 12px",
+      backgroundColor: "#5cb85c",
+      color: "#fff",
+      border: "none",
+      borderRadius: "4px",
+      cursor: "pointer",
+    }}
+  >
+    Book Now
+  </button>
+)}
+
 
             {role === "admin" && (
               <button
@@ -79,10 +156,12 @@ const BusList = () => {
         ))}
       </div>
     </div>
+
+    
   );
-};
+  
+}
+;
+
 
 export default BusList;
-
-
-
