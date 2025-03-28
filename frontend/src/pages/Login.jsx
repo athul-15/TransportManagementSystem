@@ -23,6 +23,8 @@ const Login = () => {
   
       // Save token
       localStorage.setItem("token", token);
+      localStorage.setItem("role", res.data.user.role); // stores "admin" or "user"
+
   
       // 👇 Role check: Admin or User
       if (user.role === "admin") {
