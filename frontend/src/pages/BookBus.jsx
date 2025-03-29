@@ -53,7 +53,7 @@ const BookBus = () => {
             </option>
           ))}
         </select>
-        <h2 style={styles.title}>Number of tickets</h2>
+        <h2 style={styles.title}>Select the seat number</h2>
         <input
           type="number"
           placeholder="Seat Number"
