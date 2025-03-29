@@ -9,6 +9,8 @@ import Tasks from "./pages/Tasks";
 import AdminDashboard from "./pages/AdminDashboard";
 import BookBus from "./pages/BookBus";
 import MyBookings from "./pages/MyBookings";
+import TaskList from "./components/TaskList";
+import AdminBookings from "./pages/AdminBookings";
 //import MyBookings from "./pages/MyBookings";
 
 // Inside <Routes>
@@ -22,12 +24,7 @@ function App() {
      
         <Route
           path="/"
-          element={
-            <div className="text-center mt-10">
-              <h1 className="text-2xl font-bold mb-4">Home Page</h1>
-              {/* <Link to="/register" className="text-blue-600 underline mr-4">Register</Link>
-              <Link to="/login" className="text-blue-600 underline ml-4">Login</Link> */}
-            </div>
+          element={<Login />
           }
         />
         <Route path="/my-bookings" element={<MyBookings />} />
@@ -40,6 +37,9 @@ function App() {
         <Route path="/tasks" element={<Tasks />} />
       
       <Route path="/admin" element={<AdminDashboard />} />
+      
+  <Route path="/admin/bookings" element={<AdminBookings />} />
+
 
       </Routes>
     </BrowserRouter>

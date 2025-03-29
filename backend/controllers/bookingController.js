@@ -34,4 +34,18 @@ const cancelBooking = async (req, res) => {
   res.json({ message: "Booking cancelled" });
 };
 
-module.exports = { createBooking, getUserBookings, cancelBooking };
+// GET /bookings - for admin
+const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("user", "email")
+      .populate("bus", "busNumber from to");
+    res.json(bookings);
+  } catch (error) {
+    console.error("Error fetching bookings:", error.message);
+    res.status(500).json({ message: "Failed to fetch bookings" });
+  }
+};
+
+
+module.exports = { createBooking, getUserBookings,getAllBookings, cancelBooking };

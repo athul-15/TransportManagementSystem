@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../axiosConfig";
-//  import { useNavigate } from "react-router-dom";
 import { useNavigate, Link } from "react-router-dom";
+
 
 
 const BusList = () => {
@@ -21,19 +21,19 @@ const fetchBuses = async () => {
   };
 
   useEffect(() => {
+    const fetchBuses = async () => {
+      const params = new URLSearchParams();
+      if (filters.from) params.append("from", filters.from);
+      if (filters.to) params.append("to", filters.to);
+      if (filters.date) params.append("date", filters.date);
+  
+      const res = await axios.get(`/buses?${params.toString()}`);
+      setBuses(res.data);
+    };
+  
     fetchBuses();
   }, []);
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this bus?")) return;
-    try {
-      await axios.delete(`/buses/${id}`);
-      setBuses(buses.filter((bus) => bus._id !== id));
-      alert("Bus deleted");
-    } catch (err) {
-      alert("Delete failed");
-    }
-  };
+  
 
   const cardStyle = {
     border: "1px solid #ddd",
@@ -44,6 +44,8 @@ const fetchBuses = async () => {
     transition: "transform 0.2s",
   };
 
+
+  
   const deleteButtonStyle = {
     marginTop: "10px",
     padding: "6px 12px",

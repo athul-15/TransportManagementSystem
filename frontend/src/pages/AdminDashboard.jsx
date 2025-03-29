@@ -13,8 +13,8 @@ const AdminDashboard = () => {
           📋 View All Buses
         </Link>
         {/* Optional future features */}
-        <Link to="/admin/bookings">View All Bookings</Link>
-        <Link to="/admin/users">View All Users</Link>
+       
+        {/* <Link to="/admin/users">View All Users</Link> */}
       </div>
     </div>
   );
