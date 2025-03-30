@@ -12,7 +12,9 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/buses", require("./routes/busRoutes"));
+
 app.use("/api/bookings", require("./routes/bookingRoutes"));
+
 
 
 

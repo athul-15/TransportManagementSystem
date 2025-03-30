@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // ⬅️ import useEffect
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
@@ -8,22 +8,23 @@ const Login = () => {
   const { login } = useAuth(); // custom context hook
   const navigate = useNavigate();
 
+  // 🔐 Force logout if navigating to login page
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axiosInstance.post("/auth/login", formData);
       const { token, user } = res.data;
 
-      // 🔐 Store in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
-      localStorage.setItem("user", JSON.stringify(user)); // ✅ store user
+      localStorage.setItem("user", JSON.stringify(user));
+      login(user);
 
-      login(user); // ✅ update AuthContext
-
-      // 🔁 Redirect based on role
       navigate(user.role === "admin" ? "/admin" : "/buses");
-
     } catch (error) {
       alert("Login failed. Please try again.");
     }

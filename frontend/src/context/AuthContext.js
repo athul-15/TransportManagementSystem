@@ -1,28 +1,27 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // 🔁 Check localStorage on app load
   useEffect(() => {
-    // Restore user from localStorage on app start
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
+  // ✅ Called on successful login
   const login = (userData) => {
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
   };
 
+  // 🚪 Called on logout
   const logout = () => {
+    localStorage.clear(); // or remove specific items if needed
     setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
   };
 
   return (
