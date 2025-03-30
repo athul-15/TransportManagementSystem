@@ -26,7 +26,7 @@ const Navbar = () => {
                 <Link to="/my-bookings" className="hover:underline">My Bookings</Link>
               </>
             )}
-            <Link to="/profile" className="hover:underline">Profile</Link>
+            {/* <Link to="/profile" className="hover:underline">Profile</Link> */}
             <span className="italic text-sm text-gray-200">({user.role})</span>
             <button
               onClick={handleLogout}

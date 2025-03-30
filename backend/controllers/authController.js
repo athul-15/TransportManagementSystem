@@ -7,18 +7,18 @@ const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
 // @route POST /api/auth/register
+// @route POST /api/auth/register
 const register = async (req, res) => {
   const { name, email, password, role } = req.body;
 
   const exists = await User.findOne({ email });
   if (exists) return res.status(400).json({ message: "User already exists" });
 
-  const hash = await bcrypt.hash(password, 10);
   const user = await User.create({
     name,
     email,
-    password: hash,
-    role: role || "user", // Default to "user" if not provided
+    password, // ✅ no hashing here
+    role: role || "user",
   });
 
   res.status(201).json({
@@ -27,9 +27,31 @@ const register = async (req, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role, // ✅ use "role" here
+      role: user.role,
     },
   });
+};
+
+// GET - fetch user profile
+const getProfile = async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  res.json({ name: user.name, email: user.email });
+};
+
+// PUT - update profile
+const updateProfile = async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  const { name, email, password } = req.body;
+  user.name = name || user.name;
+  user.email = email || user.email;
+  if (password) user.password = password;
+
+  const updatedUser = await user.save();
+  res.json({ message: 'Profile updated', name: updatedUser.name, email: updatedUser.email });
 };
 
 // @route POST /api/auth/login

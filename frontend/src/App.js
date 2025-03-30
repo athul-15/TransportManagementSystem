@@ -12,7 +12,7 @@ import MyBookings from "./pages/MyBookings";
 import TaskList from "./components/TaskList";
 import AdminBookings from "./pages/AdminBookings";
 //import MyBookings from "./pages/MyBookings";
-
+import Profile from "./pages/Profile"; 
 // Inside <Routes>
 
 
@@ -27,6 +27,7 @@ function App() {
           element={<Login />
           }
         />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/book" element={<BookBus />} />
         <Route path="/my-bookings" element={<MyBookings />} />

@@ -5,7 +5,7 @@ import axiosInstance from '../axiosConfig';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const { login } = useAuth();
+  const { login } = useAuth(); // custom context hook
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,10 +14,16 @@ const Login = () => {
       const res = await axiosInstance.post("/auth/login", formData);
       const { token, user } = res.data;
 
+      // 🔐 Store in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
+      localStorage.setItem("user", JSON.stringify(user)); // ✅ store user
 
+      login(user); // ✅ update AuthContext
+
+      // 🔁 Redirect based on role
       navigate(user.role === "admin" ? "/admin" : "/buses");
+
     } catch (error) {
       alert("Login failed. Please try again.");
     }
@@ -26,9 +32,7 @@ const Login = () => {
   return (
     <div
       className="flex justify-center items-center min-h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: `url("/homeimg.jpg")`,
-      }}
+      style={{ backgroundImage: `url("/homeimg.jpg")` }}
     >
       <div className="bg-white bg-opacity-90 p-8 rounded shadow-md max-w-md w-full">
         <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
