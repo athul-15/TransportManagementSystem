@@ -23,10 +23,6 @@ const getAllBuses = async (req, res) => {
     setBuses(res.data);
   };
   
-
-
-
-
 // POST /api/buses
 const addBus = async (req, res) => {
   const { busNumber, from, to, departureTime, date, seatsAvailable } = req.body;
