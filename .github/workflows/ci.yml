@@ -5,7 +5,6 @@ on:
     branches:
       - main  # Trigger CI on pushes to the main branch
 
-#jobs do not execute
 jobs:
   test:
     name: Run Tests
@@ -13,8 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22] # Test on multiple Node.js versions
-
+        node-version: [22] # Node.js version
 
     environment: MONGO_URI
 
@@ -22,34 +20,32 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Set up Node.js
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
 
     - name: Print Env Secret
-
       env:
         MONGO_URI: ${{ secrets.MONGO_URI }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         PORT: ${{ secrets.PORT }}
-      run: | 
+      run: |
         echo "Secret 1 is: $MONGO_URI"
         echo "Secret 2 is: $JWT_SECRET"
         echo "Secret 3 is: $PORT"
-      
-    - run: pm2 stop all
 
-    # Install dependencies for backend
+    # Fix: make pm2 stop optional (doesn't fail if no processes exist)
+    - name: Stop PM2 (ignore if none running)
+      run: pm2 stop all || true
+
     - name: Install Backend Dependencies
       working-directory: ./backend
-      run: | 
-       npm install --global yarn
-       yarn --version
-       yarn install
-      
-    # Install dependencies for frontend
+      run: |
+        npm install --global yarn
+        yarn --version
+        yarn install
+
     - name: Install Frontend Dependencies
       working-directory: ./frontend
       run: |
@@ -58,8 +54,6 @@ jobs:
         yarn install
         yarn run build
 
-
-    # Run backend tests
     - name: Run Backend Tests
       env:
         MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -68,13 +62,17 @@ jobs:
       working-directory: ./backend
       run: npm test
 
+    - name: Clean install
+      run: npm ci
 
-    - run: npm ci
-    - run: | 
+    - name: Setup .env file
+      run: |
         cd ./backend
         touch .env
         echo "${{ secrets.PROD }}" > .env
 
-    - run: pm2 start all
+    - name: Start PM2
+      run: pm2 start all
 
-    - run: pm2 restart all
+    - name: Restart PM2
+      run: pm2 restart all
