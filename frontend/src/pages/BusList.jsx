@@ -6,19 +6,25 @@ const BusList = () => {
   const navigate = useNavigate();
   const [buses, setBuses] = useState([]);
   const [filters, setFilters] = useState({ from: "", to: "", date: "" });
+  const [sort, setSort] = useState(""); // ⬅️ Add sort state
   const role = localStorage.getItem("role");
 
   const fetchBuses = async () => {
     const params = new URLSearchParams();
+
     if (filters.from) params.append("from", filters.from);
     if (filters.to) params.append("to", filters.to);
     if (filters.date) params.append("date", filters.date);
+    if (sort) params.append("sort", sort); // ⬅️ Add sort to params
 
     const res = await axios.get(`/buses?${params.toString()}`);
     setBuses(res.data);
   };
 
   useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const sortParam = queryParams.get("sort");
+    if (sortParam) setSort(sortParam); // ⬅️ Load initial sort from URL if exists
     fetchBuses();
   }, []);
 
@@ -45,21 +51,22 @@ const BusList = () => {
   const deleteButtonHoverStyle = {
     backgroundColor: "#c9302c",
   };
+
   const handleDelete = async (busId) => {
     if (!window.confirm("Are you sure you want to delete this bus?")) return;
-  
+
     try {
       await axios.delete(`/buses/${busId}`);
-      fetchBuses(); // Refresh list
+      fetchBuses();
       alert("Bus deleted successfully");
     } catch (err) {
       alert("Failed to delete bus");
     }
   };
-  
+
   return (
     <div style={{ padding: "20px" }}>
-      {/* 🧑‍💻 Top bar with profile and bookings */}
+      {/* 🧑‍💻 Top bar */}
       <div
         style={{
           display: "flex",
@@ -100,6 +107,30 @@ const BusList = () => {
             </button>
           </div>
         )}
+      </div>
+
+      {/* 🔽 Sort Dropdown */}
+      <div style={{ marginBottom: "15px" }}>
+        <label style={{ marginRight: "10px" }}><strong>Sort By:</strong></label>
+        <select
+          value={sort}
+          onChange={(e) => {
+            const newSort = e.target.value;
+            setSort(newSort);
+            const params = new URLSearchParams(window.location.search);
+            if (newSort) {
+              params.set("sort", newSort);
+            } else {
+              params.delete("sort");
+            }
+            window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+            fetchBuses();
+          }}
+        >
+          <option value="">-- Select --</option>
+          <option value="fare">Departure Time (Earliest First)</option>
+          <option value="time">Fare (Low to High)</option>
+        </select>
       </div>
 
       {/* 🔍 Search Form */}
@@ -148,18 +179,11 @@ const BusList = () => {
             onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
             <h3 style={{ margin: "0 0 10px 0", color: "#0056b3" }}>{bus.busNumber}</h3>
-            <p>
-              <strong>Route:</strong> {bus.from} → {bus.to}
-            </p>
-            <p>
-              <strong>Time:</strong> {bus.departureTime}
-            </p>
-            <p>
-              <strong>Date:</strong> {new Date(bus.date).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Seats Available:</strong> {bus.seatsAvailable}
-            </p>
+            <p><strong>Route:</strong> {bus.from} → {bus.to}</p>
+            <p><strong>Time:</strong> {bus.departureTime}</p>
+            <p><strong>Date:</strong> {new Date(bus.date).toLocaleDateString()}</p>
+            <p><strong>Seats Available:</strong> {bus.seatsAvailable}</p>
+            <p><strong>Fare:</strong> ${bus.fare}</p>
 
             {role === "user" && (
               <button
@@ -181,8 +205,12 @@ const BusList = () => {
             {role === "admin" && (
               <button
                 style={deleteButtonStyle}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = deleteButtonHoverStyle.backgroundColor)}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = deleteButtonStyle.backgroundColor)}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.backgroundColor = deleteButtonHoverStyle.backgroundColor)
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.backgroundColor = deleteButtonStyle.backgroundColor)
+                }
                 onClick={() => handleDelete(bus._id)}
               >
                 Delete

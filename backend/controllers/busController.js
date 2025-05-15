@@ -1,27 +1,35 @@
 const Bus = require("../models/Bus");
+const { BusSorter, SortByFare, SortByTime } = require("../BusSorter"); 
 
 // GET /api/buses
 const getAllBuses = async (req, res) => {
-    const { from, to, date } = req.query;
-    let query = {};
-  
-    if (from) query.from = { $regex: from, $options: "i" };
-    if (to) query.to = { $regex: to, $options: "i" };
-    if (date) query.date = new Date(date);
-  
+  const { from, to, date, sort } = req.query;
+  let query = {};
+
+  if (from) query.from = { $regex: from, $options: "i" };
+  if (to) query.to = { $regex: to, $options: "i" };
+  if (date) query.date = new Date(date);
+
+  try {
     const buses = await Bus.find(query);
-    res.json(buses);
-  };
-  
-  const fetchBuses = async () => {
-    const params = new URLSearchParams();
-    if (filters.from) params.append("from", filters.from);
-    if (filters.to) params.append("to", filters.to);
-    if (filters.date) params.append("date", filters.date);
-  
-    const res = await axios.get(`/buses?${params.toString()}`);
-    setBuses(res.data);
-  };
+
+    // Apply sorting based on query param
+    const sorter = new BusSorter(null);
+
+    if (sort === "fare") {
+      sorter.setStrategy(new SortByFare());
+    } else if (sort === "time") {
+      sorter.setStrategy(new SortByTime());
+    }
+
+    const result = sort ? sorter.sort([...buses]) : buses;
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
   
 // POST /api/buses
 const addBus = async (req, res) => {
