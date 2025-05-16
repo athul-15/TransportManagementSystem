@@ -11,18 +11,18 @@ describe("Bus CRUD API", function () {
   let token;
   let createdBusId;
 
-  // 🔐 Login as admin before tests
+  // Login as admin before tests
   before(async () => {
     const res = await chai.request(server).post("/api/auth/login").send({
-      email: "achu@gmail.com",   // 👈 use a real admin
-      password: "achu",         // 👈 and the correct password
+      email: "achu@gmail.com",   //  use a real admin
+      password: "achu",         //  and the correct password
     });
 
     expect(res).to.have.status(200);
     token = res.body.token;
   });
 
-  // ✅ CREATE
+  //  CREATE
   it("POST /api/buses - should create a new bus", async () => {
     const newBus = {
       busNumber: "BN-1001",
@@ -43,14 +43,14 @@ describe("Bus CRUD API", function () {
     createdBusId = res.body._id;
   });
 
-  // ✅ READ
+  //  READ
   it("GET /api/buses - should return all buses", async () => {
     const res = await chai.request(server).get("/api/buses");
     expect(res).to.have.status(200);
     expect(res.body).to.be.an("array");
   });
 
-  // ✅ UPDATE
+  //  UPDATE
   it("PUT /api/buses/:id - should update the bus", async () => {
     const updates = {
       departureTime: "11:30",
@@ -66,7 +66,7 @@ describe("Bus CRUD API", function () {
     expect(res).to.have.status(200);
   });
 
-  // ✅ DELETE
+  //  DELETE
   it("DELETE /api/buses/:id - should delete the bus", async () => {
     const res = await chai
       .request(server)

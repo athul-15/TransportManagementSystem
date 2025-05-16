@@ -52,5 +52,19 @@ const deleteBus = async (req, res) => {
   if (!deleted) return res.status(404).json({ message: "Bus not found" });
   res.json({ message: "Bus deleted" });
 };
+const logger = require('../utils/Logger');
+
+// Example usage inside a controller
+exports.getAllBuses = async (req, res) => {
+  try {
+    logger.log("Fetching all buses");
+    // Fetch bus logic here
+    res.status(200).json({ message: "Buses fetched successfully" });
+  } catch (error) {
+    logger.log(`Error fetching buses: ${error.message}`);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = { getAllBuses, addBus, updateBus, deleteBus };

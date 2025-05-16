@@ -47,5 +47,42 @@ const getAllBookings = async (req, res) => {
   }
 };
 
+const cloneBooking = async (req, res) => {
+  try {
+    const original = await Booking.findById(req.params.id);
+    if (!original) return res.status(404).json({ message: "Original booking not found" });
 
-module.exports = { createBooking, getUserBookings,getAllBookings, cancelBooking };
+    const { seatNumber } = req.body;
+    if (!seatNumber) return res.status(400).json({ message: "Seat number is required" });
+
+    const seatTaken = await Booking.findOne({
+      bus: original.bus,
+      bookingDate: original.bookingDate,
+      seatNumber,
+    });
+
+    if (seatTaken) {
+      return res.status(409).json({ message: "Seat already taken" });
+    }
+
+    const newBooking = await Booking.create({
+      user: req.user._id,
+      bus: original.bus,
+      seatNumber,
+      bookingDate: new Date(), // or original.bookingDate
+    });
+
+    res.status(201).json({ message: "Booking cloned successfully", newBooking });
+  } catch (err) {
+    console.error("Clone error:", err.message);
+    res.status(500).json({ message: "Failed to clone booking" });
+  }
+};
+module.exports = {
+  createBooking,
+  getUserBookings,
+  cancelBooking,
+  getAllBookings,
+  cloneBooking, 
+};
+

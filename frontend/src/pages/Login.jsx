@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // ⬅️ import useEffect
+import React, { useState, useEffect } from 'react'; //  import useEffect
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
@@ -8,7 +8,7 @@ const Login = () => {
   const { login } = useAuth(); // custom context hook
   const navigate = useNavigate();
 
-  // 🔐 Force logout if navigating to login page
+  //  Force logout if navigating to login page
   useEffect(() => {
     localStorage.clear();
   }, []);

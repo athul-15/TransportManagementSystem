@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 // Inside <Routes>
 
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -44,9 +45,9 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+    
   );
 }
 
+
 export default App;
-
-
