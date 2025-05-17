@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Define Mongoose schema
 const bookingSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   bus: { type: mongoose.Schema.Types.ObjectId, ref: "Bus", required: true },
@@ -7,9 +8,11 @@ const bookingSchema = new mongoose.Schema({
   bookingDate: { type: Date, default: Date.now },
 });
 
-// Prototype design pattern applied using clone method
+// Create Mongoose model
+const BookingModel = mongoose.model("Booking", bookingSchema);
 
-class Booking {
+// Prototype class for cloning
+class BookingPrototype {
   constructor({ userId, busId, date, seats, pickup, drop }) {
     this.userId = userId;
     this.busId = busId;
@@ -19,19 +22,20 @@ class Booking {
     this.drop = drop;
   }
 
-  // Prototype pattern: Clone the booking
   clone() {
-    return new Booking({ 
+    return new BookingPrototype({
       userId: this.userId,
       busId: this.busId,
-      date: this.date,          
+      date: this.date,
       seats: this.seats,
       pickup: this.pickup,
-      drop: this.drop
+      drop: this.drop,
     });
   }
 }
 
-module.exports = Booking;
-
-module.exports = mongoose.model("Booking", bookingSchema);
+// Export both
+module.exports = {
+  BookingModel,
+  BookingPrototype,
+};

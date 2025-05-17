@@ -37,6 +37,21 @@ const BusList = () => {
     transition: "transform 0.2s",
   };
 
+const editButtonStyle = {
+    marginTop: "10px",
+    padding: "6px 12px",
+    backgroundColor: "#0275d8",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  };
+
+  const editButtonHoverStyle = {
+  backgroundColor: "#025aa5", // darker blue on hover
+};
+
   const deleteButtonStyle = {
     marginTop: "10px",
     padding: "6px 12px",
@@ -52,6 +67,7 @@ const BusList = () => {
     backgroundColor: "#c9302c",
   };
 
+  
   const handleDelete = async (busId) => {
     if (!window.confirm("Are you sure you want to delete this bus?")) return;
 
@@ -203,19 +219,35 @@ const BusList = () => {
             )}
 
             {role === "admin" && (
-              <button
-                style={deleteButtonStyle}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = deleteButtonHoverStyle.backgroundColor)
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = deleteButtonStyle.backgroundColor)
-                }
-                onClick={() => handleDelete(bus._id)}
-              >
-                Delete
-              </button>
-            )}
+  <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+    <button
+      style={editButtonStyle}
+      onMouseOver={(e) =>
+        (e.currentTarget.style.backgroundColor = editButtonHoverStyle.backgroundColor)
+      }
+      onMouseOut={(e) =>
+        (e.currentTarget.style.backgroundColor = editButtonStyle.backgroundColor)
+      }
+      onClick={() => navigate(`/edit-bus/${bus._id}`)}
+    >
+      Edit
+    </button>
+
+    <button
+      style={deleteButtonStyle}
+      onMouseOver={(e) =>
+        (e.currentTarget.style.backgroundColor = deleteButtonHoverStyle.backgroundColor)
+      }
+      onMouseOut={(e) =>
+        (e.currentTarget.style.backgroundColor = deleteButtonStyle.backgroundColor)
+      }
+      onClick={() => handleDelete(bus._id)}
+    >
+      Delete
+    </button>
+  </div>
+)}
+
           </div>
         ))}
       </div>

@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BusList from "./pages/BusList";
 import AddBus from "./pages/AddBus";
+import EditBus from "./pages/EditBus";
 import './App.css';
 import Navbar from './components/Navbar';
 import Tasks from "./pages/Tasks";
@@ -36,6 +37,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/buses" element={<BusList />} />
         <Route path="/add-bus" element={<AddBus />} />
+        <Route path="/edit-bus/:id" element={<EditBus />} />
         <Route path="/tasks" element={<Tasks />} />
       
       <Route path="/admin" element={<AdminDashboard />} />
