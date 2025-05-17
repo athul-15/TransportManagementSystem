@@ -1,48 +1,20 @@
 const bookingEmitter = require("../observers/BookingEvent");
 require("../observers/mailObserver");
 const { BookingModel } = require("../models/Booking");
-
-//const Booking = require("../models/Booking");
 const Bus = require("../models/Bus");
 const User = require("../models/User");
+const bookingFacade = require("../facades/BookingFacade"); // ✅ Facade imported
 
 // POST /api/bookings - Book a bus ticket
 const createBooking = async (req, res) => {
+  const { busId, seatNumber } = req.body;
+
   try {
-    const { busId, seatNumber } = req.body;
-
-    // Check if bus exists
-    const bus = await Bus.findById(busId);
-    if (!bus) return res.status(400).json({ message: "Bus not found" });
-
-    // Check if seat is already booked
-    const existing = await BookingModel.findOne({ bus: busId, seatNumber });
-    if (existing) return res.status(400).json({ message: "Seat already booked" });
-
-    // Create booking
-    const booking = await BookingModel.create({
-      user: req.user._id,
-      bus: busId,
-      seatNumber,
-    });
-
-    const user = await User.findById(req.user._id);
-
-    // Emit booking confirmation event (Observer Pattern)
-    bookingEmitter.emit("busBooked", {
-      email: user.email,
-      bus: {
-        busNumber: bus.busNumber,
-        date: bus.date,
-        departureTime: bus.departureTime,
-        seatNumber: seatNumber,
-      },
-    });
-
+    const booking = await bookingFacade.create(req.user._id, busId, seatNumber);
     res.status(201).json(booking);
   } catch (error) {
-console.error("Create booking error:", error);
-    res.status(500).json({ message: "Failed to create booking" });
+    console.error("Create booking error:", error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 
